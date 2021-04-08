@@ -15,6 +15,12 @@ class PhongMaterial extends Material {
 
         }, [], vertexShader, fragmentShader);
     }
+    updateAttribs(light, translate, scale) {
+        let lightMVP = light.CalcLightMVP(translate, scale);
+        this.uniforms['uLightMVP'] = { type: 'matrix4fv', value: lightMVP };
+    }
+
+    
 }
 
 async function buildPhongMaterial(color, specular, light, translate, scale, vertexPath, fragmentPath) {

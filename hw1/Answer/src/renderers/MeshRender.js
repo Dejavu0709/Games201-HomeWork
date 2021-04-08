@@ -194,7 +194,7 @@ class MeshRender {
 
 		// Bind material parameters
 		this.bindMaterialParameters();
-
+		//console.log("bind material parameters");
 		// Draw
 		{
 			const vertexCount = this.mesh.count;

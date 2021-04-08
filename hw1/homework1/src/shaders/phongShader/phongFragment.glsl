@@ -21,7 +21,7 @@ varying highp vec3 vNormal;
 #define NUM_RINGS 10
 #define LIGHT_WIDTH 100
 #define RESOLUTION 2048
-#define BIAS 0.001
+#define BIAS 0.0004
 
 
 #define EPS 1e-3
@@ -193,9 +193,9 @@ void main(void) {
   float visibility;
   vec3 shadowCoord = vPositionFromLight.xyz;
   shadowCoord = 0.5 + shadowCoord * 0.5;
-  visibility = useShadowMap(uShadowMap, vec4(shadowCoord, 1.0));
+  //visibility = useShadowMap(uShadowMap, vec4(shadowCoord, 1.0));
   //visibility = PCF(uShadowMap, vec4(shadowCoord, 1.0));
-  //visibility = PCSS(uShadowMap, vec4(shadowCoord, 1.0));
+  visibility = PCSS(uShadowMap, vec4(shadowCoord, 1.0));
   vec3 phongColor = blinnPhong();
 
   gl_FragColor = vec4(phongColor * visibility, 1.0);

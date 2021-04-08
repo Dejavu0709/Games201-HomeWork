@@ -5,13 +5,13 @@ class TRSTransform {
     }
 }
 class Mesh {
-	constructor(verticesAttrib, normalsAttrib, texcoordsAttrib, indices, transform) {
+	constructor(verticesAttrib, normalsAttrib, texcoordsAttrib, indices, transform, moveable) {
 		this.indices = indices;
 		this.count = indices.length;
 		this.hasVertices = false;
 		this.hasNormals = false;
 		this.hasTexcoords = false;
-
+		this.moveable = moveable;
 		const modelTranslation = [transform.modelTransX, transform.modelTransY, transform.modelTransZ];
 		const modelScale = [transform.modelScaleX, transform.modelScaleY, transform.modelScaleZ];
 		let meshTrans = new TRSTransform(modelTranslation, modelScale);
