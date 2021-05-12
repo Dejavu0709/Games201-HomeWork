@@ -1,4 +1,4 @@
-function loadOBJ(renderer, path, name, objMaterial, transform) {
+function loadOBJ(renderer, path, name, objMaterial, transform, moveable) {
 
 	const manager = new THREE.LoadingManager();
 	manager.onProgress = function (item, loaded, total) {
@@ -32,7 +32,7 @@ function loadOBJ(renderer, path, name, objMaterial, transform) {
 							let mesh = new Mesh({ name: 'aVertexPosition', array: geo.attributes.position.array },
 								{ name: 'aNormalPosition', array: geo.attributes.normal.array },
 								{ name: 'aTextureCoord', array: geo.attributes.uv.array },
-								indices, transform);
+								indices, transform, moveable);
 
 							let colorMap = new Texture();
 							if (mat.map != null) {
@@ -59,7 +59,7 @@ function loadOBJ(renderer, path, name, objMaterial, transform) {
 								renderer.addMeshRender(meshRender);
 							});
 							shadowMaterial.then((data) => {
-								let shadowMeshRender = new MeshRender(renderer.gl, mesh, data);
+								let shadowMeshRender = new MeshRender(renderer.gl, mesh, data,);
 								renderer.addShadowMeshRender(shadowMeshRender);
 							});
 						}

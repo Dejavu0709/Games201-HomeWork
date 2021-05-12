@@ -7,6 +7,12 @@ class ShadowMaterial extends Material {
             'uLightMVP': { type: 'matrix4fv', value: lightMVP }
         }, [], vertexShader, fragmentShader, light.fbo);
     }
+
+    updateAttribs(light, translate, scale) {
+        let lightMVP = light.CalcLightMVP(translate, scale);
+        this.uniforms['uLightMVP'] = { type: 'matrix4fv', value: lightMVP };
+    }
+
 }
 
 async function buildShadowMaterial(light, translate, scale, vertexPath, fragmentPath) {
