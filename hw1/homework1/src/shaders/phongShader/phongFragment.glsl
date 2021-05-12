@@ -19,6 +19,7 @@ varying highp vec3 vNormal;
 #define BLOCKER_SEARCH_NUM_SAMPLES NUM_SAMPLES
 #define PCF_NUM_SAMPLES NUM_SAMPLES
 #define NUM_RINGS 10
+#define LIGHT_WIDTH 4;
 
 #define EPS 1e-3
 #define PI 3.141592653589793
@@ -84,6 +85,9 @@ void uniformDiskSamples( const in vec2 randomSeed ) {
 }
 
 float findBlocker( sampler2D shadowMap,  vec2 uv, float zReceiver ) {
+
+
+
 	return 1.0;
 }
 
@@ -107,10 +111,10 @@ float PCF(sampler2D shadowMap, vec4 coords) {
 
 float PCSS(sampler2D shadowMap, vec4 coords){
 
+  coords = 0.5 + coords * 0.5; 
   // STEP 1: avgblocker depth
-
+  float avgDepth = findBlocker(shadowMap, coords.xy, coords.z/coords.w);
   // STEP 2: penumbra size
-
   // STEP 3: filtering
   
   return 1.0;
