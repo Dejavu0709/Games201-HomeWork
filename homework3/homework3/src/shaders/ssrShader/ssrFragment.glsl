@@ -123,7 +123,8 @@ vec3 GetGBufferDiffuse(vec2 uv) {
  */
 vec3 EvalDiffuse(vec3 wi, vec3 wo, vec2 uv) {
   vec3 L = vec3(0.0);
-  L = GetGBufferDiffuse(uv) * INV_PI * max(0.0, dot(wo, GetGBufferNormalWorld(uv)));
+  vec3 halfVec = normalize((wi + wo) / 2.0);
+  L = GetGBufferDiffuse(uv) * INV_PI * max(0.0, dot(halfVec, GetGBufferNormalWorld(uv)));
   return L;
 }
 
@@ -164,24 +165,47 @@ void main() {
 
   vec3 L = vec3(0.0);
   vec2 uv = GetScreenCoordinate(vPosWorld.xyz);
-  L = EvalDiffuse(normalize(uLightDir), normalize(uCameraPos - vPosWorld.xyz), uv) * EvalDirectionalLight(uv);
+  vec3 bsdf = EvalDiffuse(normalize(uLightDir), normalize(uCameraPos - vPosWorld.xyz), uv);
+  L = bsdf * EvalDirectionalLight(uv);
 
 
+  //Mirror Reflection
+  /*
   vec3 hitPos = vec3(0.0);
   vec3 inDir = normalize(vPosWorld.xyz - uCameraPos);
   vec3 normal = GetGBufferNormalWorld(uv);
- // vec3 outDir = inDir - 2.0 * max(0.0, dot(inDir, normal)) * normal; 
-   vec3 outDir = inDir - 2.0 * dot(inDir, normal) * normal; 
+  vec3 outDir = inDir - 2.0 * dot(inDir, normal) * normal; 
   if(RayMarch(vPosWorld.xyz, normalize(outDir) ,hitPos))
   {
      uv = GetScreenCoordinate(hitPos);
      L = GetGBufferDiffuse(uv);
-      // L = vec3(1.0);
   }
   else
   {
      L = vec3(0.0);
   }
+  */
+  //Indirect
+  float pdf = 0.0;
+  vec3 indirectColor= vec3(0.0);
+  vec3 n = GetGBufferNormalWorld(uv);
+  for(int i = 0; i < SAMPLE_NUM; i++)
+  {
+      float rand = Rand1(s);
+      vec3 localDir = SampleHemisphereCos(rand, pdf);
+      vec3 b1;
+      vec3 b2;
+      vec3 hitPos = vec3(0.0);
+      LocalBasis(n, b1, b2);
+      vec3 dir =  normalize(mat3(b1, b2, n) * localDir);
+      if(RayMarch(vPosWorld.xyz, dir, hitPos))
+      {
+        vec2 hitPosUV = GetScreenCoordinate(hitPos);
+        indirectColor += (EvalDiffuse(normalize(hitPos - vPosWorld.xyz), normalize(uCameraPos - vPosWorld.xyz), uv) / pdf) * EvalDiffuse(normalize(uLightDir), normalize(uCameraPos - hitPos), hitPosUV) * EvalDirectionalLight(hitPosUV);
+      }
+  }
+  indirectColor = indirectColor / float(SAMPLE_NUM);
+  L += indirectColor;
   vec3 color = pow(clamp(L, vec3(0.0), vec3(1.0)), vec3(1.0 / 2.2));
   gl_FragColor = vec4(vec3(color.rgb), 1.0);
 }
