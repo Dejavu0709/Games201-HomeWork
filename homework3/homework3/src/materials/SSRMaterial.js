@@ -13,6 +13,10 @@ class SSRMaterial extends Material {
             'uGNormalWorld': { type: 'texture', value: camera.fbo.textures[2] },
             'uGShadow': { type: 'texture', value: camera.fbo.textures[3] },
             'uGPosWorld': { type: 'texture', value: camera.fbo.textures[4] },
+            'uDepthMipMap1': { type: 'texture', value: camera.mipmapFbo.textures[0] },
+            'uDepthMipMap2': { type: 'texture', value: camera.mipmapFbo.textures[1] },
+            'uDepthMipMap': { type: 'texture', value: camera.mipmapFbo.textures[2] },
+              
         }, [], vertexShader, fragmentShader);
     }
 }

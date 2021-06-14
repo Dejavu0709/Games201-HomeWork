@@ -10,7 +10,9 @@ uniform sampler2D uGDepth;
 uniform sampler2D uGNormalWorld;
 uniform sampler2D uGShadow;
 uniform sampler2D uGPosWorld;
-
+uniform sampler2D uDepthMipMap1;
+uniform sampler2D uDepthMipMap2;
+uniform sampler2D uDepthMipMap3;
 varying mat4 vWorldToScreen;
 varying highp vec4 vPosWorld;
 
@@ -142,7 +144,7 @@ vec3 EvalDirectionalLight(vec2 uv) {
 
 bool RayMarch(vec3 ori, vec3 dir, out vec3 hitPos) {
 
-  float step = 0.05;
+  float step = 0.5;
   int MarchNum = 200;
   vec3 marchPoint = ori;
   for(int i = 0; i < 5000; i++)
@@ -205,7 +207,15 @@ void main() {
       }
   }
   indirectColor = indirectColor / float(SAMPLE_NUM);
-  L += indirectColor;
+  //L += indirectColor;
+
+
+  L = vec3(texture2D(uDepthMipMap1, uv).x);
+  // if (depth < 1e-2) {
+  //   depth = 1000.0;
+  // }
+
+
   vec3 color = pow(clamp(L, vec3(0.0), vec3(1.0)), vec3(1.0 / 2.2));
   gl_FragColor = vec4(vec3(color.rgb), 1.0);
 }

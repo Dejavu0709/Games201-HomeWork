@@ -2,6 +2,7 @@ class WebGLRenderer {
     meshes = [];
     shadowMeshes = [];
     bufferMeshes = [];
+    depthMimMapMeshes = [];
     lights = [];
 
     constructor(gl, camera) {
@@ -18,7 +19,7 @@ class WebGLRenderer {
     addMeshRender(mesh) { this.meshes.push(mesh); }
     addShadowMeshRender(mesh) { this.shadowMeshes.push(mesh); }
     addBufferMeshRender(mesh) { this.bufferMeshes.push(mesh); }
-
+    addDepthMipMapMeshRender(mesh) { this.depthMimMapMeshes.push(mesh); }
     render() {
         console.assert(this.lights.length != 0, "No light");
         console.assert(this.lights.length == 1, "Multiple lights");
@@ -60,7 +61,12 @@ class WebGLRenderer {
             // this.bufferMeshes[i].draw(this.camera);
         }
         // return
-
+        // DepthMipMap pass
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.camera.mipmapFbo);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        for (let i = 0; i < this.depthMimMapMeshes.length; i++) {
+            this.depthMimMapMeshes[i].draw(this.camera, this.camera.mipmapFbo, updatedParamters);
+        }
         // Camera pass
         for (let i = 0; i < this.meshes.length; i++) {
             this.meshes[i].draw(this.camera, null, updatedParamters);

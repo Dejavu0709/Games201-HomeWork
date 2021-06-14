@@ -36,7 +36,7 @@ function GAMES202Main() {
 	*/
 	camera.position.set(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
 	camera.fbo = new FBO(gl);
-
+	camera.mipmapFbo = new FBO(gl);
 	// Add resize listener
 	function setSize(width, height) {
 		camera.aspect = width / height;
